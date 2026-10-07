@@ -70,67 +70,9 @@ Same validation/regeneration columns as `baseline.csv`, plus:
 | `proxy_type` | Confidence tier of the implicit identity signal: `weak`, `medium`, or `strong` |
 | `phi`, `theta`, `prior`, `k` | Parameters of the proxy generation model (association strength, target confidence level, prior group probability, and number of required attributes; see paper for the underlying formulation) |
 
-## Counterfactual grouping
 
-In `baseline.csv`, rows sharing the same `refid` form a matched counterfactual
-group: the same underlying test case, expressed once per identity term within
-a given `bias_type`. For `paraphrases.csv` and `proxies.csv`, the equivalent
-counterfactual group for a given transformation type is obtained by grouping
-on `(original_refid, paraphrase_type)` or `(baseline_refid, proxy_type)`
-respectively, since `paraphrase_refid` / `proxy_refid` identify individual
-rows rather than counterfactual groups.
 
-## Metric selection and validation data
 
-In addition to the three test-case files above, this repository includes
-the data supporting RQ1 (human validation of test-case quality) and RQ3
-(reliability of automatic bias metric configuration selection):
-
-| File | Description | Rows |
-|---|---|---|
-| `metric_choices.csv` | Raw per-LLM metric configuration selections, 4 LLMs (GPT-5, Claude Sonnet 5, Gemini 3.1 Pro Preview, DeepSeek V4 Pro) × 21 evaluated models | 84 |
-| `expert_gold_standard.csv` | Independent human-expert metric configuration selection for each of the 21 models, collected blind to the LLMs' selections, used to validate automatically adopted configurations | 21 |
-| `human_validation_sample.csv` | Stratified random sample of baseline, paraphrase, and proxy test cases with human quality judgments, used to validate the Filtering Agent's decisions | 384 |
-
-`metric_choices.csv` contains the raw votes behind the paper's inter-LLM
-agreement analysis (exact agreement rate, Krippendorff's α, Fleiss' κ per
-configuration component); these statistics can be recomputed directly from
-this file. Precomputed aggregate agreement files from intermediate runs are
-intentionally not included, as they do not reflect the final evaluation
-reported in the paper; recomputing them from `metric_choices.csv` avoids
-any risk of inconsistency.
-
-## Data cleaning applied before release
-
-Two issues were identified and corrected prior to publishing this dataset:
-
-- **Stale cross-references in `paraphrases.csv`.** Because the underlying
-  baseline dataset went through several regeneration rounds, some rows in
-  the original paraphrase file referenced an `original_id` that no longer
-  existed in the final `baseline.csv` (orphaned references), or whose
-  `original_sentence` no longer matched the corresponding row in
-  `baseline.csv` (references to an earlier, superseded version of that
-  sentence). 1,287 such rows (of 15,075) were removed. The released file
-  guarantees that for every row, `original_id` exists in `baseline.csv`
-  and `original_sentence` is character-identical to `baseline.csv`'s
-  `sentence` for that `id`.
-- **Stale cross-references in `proxies.csv`.** The same regeneration-round
-  issue described above for paraphrases also affected proxies: some rows
-  referenced a `baseline_id` no longer present in `baseline.csv`, or whose
-  `baseline_sentence` no longer matched the corresponding row in
-  `baseline.csv`. 414 such rows (of 6,138) were removed, following the same
-  rule applied to `paraphrases.csv`.
-- **Grammatical artifact in `proxies.csv`.** A subset of proxy sentences
-  were constructed by inserting an identity-masking clause (e.g., "someone
-  who ...") in place of the explicit identity term, for cases where that
-  term appeared without a preceding article. When the original baseline
-  sentence used a plural quantifier directly before the identity term
-  (e.g., "Many Christians ..."), this produced an ungrammatical result
-  (e.g., "Many someone who ..."). Affected sentences were corrected by
-  removing the now-redundant plural quantifier (e.g., "Many someone who
-  ..." → "Someone who ..."). This fix resolves the local subject-determiner
-  mismatch; it does not perform a full grammatical re-validation of the
-  rest of the sentence.
 
 ## Content notice
 
@@ -139,19 +81,4 @@ used to construct these test cases reflect common societal stereotypes used
 to probe model behavior. They are included strictly for bias-testing purposes
 and do not represent factual claims or endorsements by the authors.
 
-## Citation
 
-If you use this dataset, please cite:
-
-```bibtex
-@inproceedings{biasagent2026,
-  title     = {BiasAgent: A Multi-Agent Framework for Automated Social Bias Testing of Text Classification Models},
-  author    = {TODO},
-  year      = {2026}
-}
-```
-
-## License
-
-TODO: specify a license (e.g., CC-BY-4.0 for data, MIT for code) before
-publishing.
