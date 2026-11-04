@@ -1,0 +1,70 @@
+{
+  "sentiment analysis": {
+    "labels": [
+      "negative",
+      "neutral",
+      "positive"
+    ]
+  },
+  "hate speech detection": {
+    "labels": [
+      "non-offensive",
+      "offensive",
+      "hate speech"
+    ]
+  },
+  "toxicity detection": {
+    "labels": [
+      "non-toxic",
+      "toxic"
+    ]
+  },
+  "spam detection": {
+    "labels": [
+      "ham",
+      "spam"
+    ]
+  },
+  "irony detection": {
+    "labels": [
+      "non-ironic",
+      "irony"
+    ]
+  },
+  "judging educational value of texts": {
+    "labels": [
+      "non-informative",
+      "informative but non-educational",
+      "educational"
+    ]
+  },
+  "bias detection": {
+    "labels": [
+      "neutral",
+      "biased"
+    ]
+  },
+  "fake news detection": {
+    "labels": [
+      "fake",
+      "real"
+    ]
+  },
+  "emotion detection": {
+    "labels": [
+      "anger",
+      "disgust",
+      "fear",
+      "joy",
+      "neutral",
+      "sadness",
+      "surprise"
+    ]
+  },
+  "clickbait detection": {
+    "labels": [
+      "not_clickbait",
+      "clickbait"
+    ]
+  }
+}

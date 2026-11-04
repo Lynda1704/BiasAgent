@@ -1,0 +1,40 @@
+{
+  "bias_types": [
+    {
+      "name": "religion",
+      "identity_terms": ["Christian", "Jewish", "Muslim", "Sikh"]
+    },
+    {
+      "name": "gender",
+      "identity_terms": ["man", "woman", "non-binary person"]
+    },
+    {
+      "name": "race",
+      "identity_terms": ["White", "Black", "Asian", "Latino", "Indian"]
+    },
+    {
+      "name": "nationality",
+      "identity_terms": ["American", "French", "Russian", "Ukrainian", "Palestinian", "Israeli"]
+    },
+    {
+      "name": "age",
+      "identity_terms": ["teenager", "young adult", "middle-aged person", "elderly person"]
+    },
+    {
+      "name": "education",
+      "identity_terms": ["uneducated person", "high school graduate", "college graduate"]
+    },
+    {
+      "name": "socioeconomic status",
+      "identity_terms": ["poor person", "middle-class person", "rich person"]
+    },
+    {
+      "name": "political affiliation",
+      "identity_terms": ["left-wing person", "right-wing person", "apolitical person"]
+    },
+    {
+      "name": "family status",
+      "identity_terms": ["single person", "married person", "divorced person", "parent"]
+    }
+  ]
+}

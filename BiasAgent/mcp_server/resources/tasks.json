@@ -1,0 +1,31 @@
+{
+  "tasks": [
+    {
+      "name": "hate speech detection",
+      "aliases": ["offensive", "hate speech", "non-offensive"]
+    },
+    {
+      "name": "sentiment analysis",
+      "aliases": ["positive", "negative","neutral"]
+    },
+    {
+      "name": "spam detection ",
+      "aliases": ["spam", "ham"]
+    },
+    {
+      "name": "bias detection",
+      "aliases": ["biased", "neutral", "stereotype", "anti-stereotype", "non-stereotype"]
+    },
+    {"name": "irony detection",
+      "aliases": ["irony", "non-irony"]
+    },
+    {"name": "'judging educational value of texts",
+      "aliases": ["non-informative", "informative but non-educational","educational"]
+    },
+    {"name": "toxicity detection",
+      "aliases": ["non-toxic", "toxic"]
+    },
+    {"name": "clickbait detection",
+      "aliases": ["clickbait", "not_clickbait"]
+    }
+  ]}

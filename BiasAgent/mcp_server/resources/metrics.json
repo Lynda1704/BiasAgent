@@ -1,0 +1,292 @@
+{
+  "general_metric_framework": {
+    "name": "generalized_bias_metric",
+    "description": "Extrinsic bias metrics are represented as parametrizations of one generalized metric. The agent should choose a scoring function, a distance function, a fairness idiom, and a contrasting method.",
+    "parameters": [
+      {
+        "name": "scoring_function",
+        "symbol": "phi",
+        "definition": "A scoring function computes the base outcome measured for a given group or set of test cases. It defines what is meant by model outcome, such as performance, probability, likelihood, or another task-relevant quantity."
+      },
+      {
+        "name": "distance_function",
+        "symbol": "d",
+        "definition": "A distance function compares the scores produced by the scoring function for different groups or subsets. It defines how disparity between outcomes is quantified."
+      },
+      {
+        "name": "fairness_idiom",
+        "definition": "A fairness idiom defines whether bias is computed after aggregating examples by group or at the level of matched counterfactual examples before aggregation."
+      },
+      {
+        "name": "contrasting_method",
+        "definition": "A contrasting method defines how differences between multiple groups are combined, especially when the bias type has more than two demographic groups."
+      }
+    ]
+  },
+  "fairness_idioms": [
+   {
+  "name": "group",
+  "parameter_type": "fairness_idiom",
+  "definition": "Computes bias by aggregating examples by demographic group and comparing group-level behavior.",
+  "notes": [
+    "This idiom measures aggregate differences across demographic groups."
+  ]
+},
+    {
+      "name": "counterfactual",
+      "definition": "Counterfactual fairness evaluates bias by comparing demographic variants of the same test case, applying the scoring function separately to each matched variant, computing differences within each case, and then averaging across cases.",
+      "interpretation": "This measures how much the model output changes when only the demographic mention changes inside the same base example."
+    }
+  ],
+  "contrasting_methods": [
+   {
+  "name": "pcm",
+  "parameter_type": "contrasting_method",
+  "definition": "Pairwise Contrasting Method computes pairwise differences between demographic groups and averages them.",
+  "notes": [
+    "Can be applied when there are two or more demographic groups."
+  ]
+},
+    {
+  "name": "bcm",
+  "parameter_type": "contrasting_method",
+  "definition": "Background Contrasting Method compares each demographic group score against a background or global score, then aggregates the deviations.",
+  "notes": ["Compares group scores to a reference score."
+  ]
+},
+    {
+      "name": "vbcm",
+      "full_name": "Per-group Background Contrasting Method",
+      "definition": "Same idea as BCM, but returns one score per group instead of averaging them into a single scalar.",
+      "interpretation": "Returns one score per group.",
+      "arity": "pairwise_with_background"
+    },
+    {
+      "name": "mcm",
+      "full_name": "Multigroup Contrasting Method",
+      "definition": "Apply a distance function directly to the set of all group scores at once, instead of using pairwise comparisons.",
+      "interpretation": "Applies a distance function directly to all group scores.",
+      "arity": "multigroup"
+    },
+    {
+      "name": "vmcm",
+      "full_name": "Per-group Multigroup Contrasting Method",
+      "definition": "Variant of MCM that returns per-group contributions instead of only one aggregated score.",
+      "interpretation": "Returns per-group multigroup contributions.",
+      "arity": "multigroup"
+    },
+    {
+      "name": "ncm",
+      "full_name": "No Contrasting Method",
+      "definition": "No explicit group-to-group contrast is applied. Bias is defined instead as divergence from an expected or ideal outcome, often a uniform or neutral reference.",
+      "interpretation": "Does not perform explicit group-to-group comparison.",
+      "arity": "none"
+    }
+  ],
+  "scoring_functions": [
+    {
+  "name": "F1_Score",
+  "parameter_type": "scoring_function",
+  "returns": "singleton",
+  "requires_ground_truth": true,
+  "requires_target_label": true,
+  "definition": "Computes the harmonic mean of precision and recall.",
+  "uses": [
+    "ground_truth_label",
+    "predicted_label"
+  ],
+  "notes": [
+    "Requires ground-truth labels.",
+    "Requires a target class.",
+    "Balances precision and recall."
+  ]
+},
+   {
+  "name": "Accuracy_Score",
+  "parameter_type": "scoring_function",
+  "returns": "singleton",
+  "requires_ground_truth": true,
+  "requires_target_label": false,
+  "definition": "Computes the proportion of correctly classified examples.",
+  "uses": [
+    "ground_truth_label",
+    "predicted_label"
+  ],
+  "notes": [
+    "Requires ground-truth labels.",
+    "Suitable for classification tasks.",
+    "Measures predictive performance rather than prediction stability."
+  ]
+},
+    {
+  "name": "Precision_Score",
+  "parameter_type": "scoring_function",
+  "returns": "singleton",
+  "requires_ground_truth": true,
+  "requires_target_label": true,
+  "definition": "Measures the proportion of predicted positive instances that are actually positive.",
+  "uses": [
+    "ground_truth_label",
+    "predicted_label"
+  ],
+  "notes": [
+    "Requires ground-truth labels.",
+    "Requires a target class.",
+    "Useful when false positives are costly."
+  ]
+},
+    {
+  "name": "Recall_Score",
+  "parameter_type": "scoring_function",
+  "returns": "singleton",
+  "requires_ground_truth": true,
+  "requires_target_label": true,
+  "definition": "Measures the proportion of actual positive instances that are correctly identified.",
+  "uses": [
+    "ground_truth_label",
+    "predicted_label"
+  ],
+  "notes": [
+    "Requires ground-truth labels.",
+    "Requires a target class."
+  ]
+},
+   {
+  "name": "ClassPrediction_Score",
+  "parameter_type": "scoring_function",
+  "returns": "singleton",
+  "definition": "Retrieves the prediction score of a target class for each test case and returns the set of scores without averaging.",
+  "requires_ground_truth": false,
+  "notes": [
+     "Returns one target-class score."
+
+  ]
+},
+    {
+  "name": "AverageClassPrediction_Score",
+  "parameter_type": "scoring_function",
+  "returns": "singleton",
+  "definition": "Retrieves the prediction score of a target class for each test case and computes the arithmetic mean across the selected examples.",
+  "requires_ground_truth": false,
+  "notes": [
+     "Returns the arithmetic mean of target-class scores."
+
+  ]
+},
+    {
+      "name": "AverageLikelihood_Score",
+      "definition": "Computes the average likelihood assigned to a target token or word across examples in masked language modeling settings.",
+      "returns": "singleton",
+      "requires_ground_truth": false,
+      "requires_label_mapping": false,
+      "needs_full_class_information": true,
+      "usable_with_top_label_only": false,
+      "usable_with_logits_or_full_probabilities": true,
+      "supports_multiclass": false,
+      "notes": "Relevant for masked language modeling, not standard sequence classification."
+    },
+{
+  "name": "FailureRate",
+  "parameter_type": "scoring_function",
+  "returns": "failure",
+  "requires_ground_truth": false,
+  "requires_target_label": false,
+  "definition": "Computes the proportion of comparisons for which the difference between model predictions exceeds a specified threshold.",
+  "uses": [
+    "model_prediction"
+  ],
+  "notes": [
+    "Requires a threshold θ.",
+    "Returns a proportion between 0 and 1.",
+    "Designed to measure prediction instability across demographic variants.",
+    "Can be used when no ground-truth labels are available."
+  ]
+},
+    {
+      "name": "AverageF1ForQA_Score",
+      "definition": "Computes F1 at the question-answering example level, then averages across examples.",
+      "returns": "singleton",
+      "requires_ground_truth": true,
+      "requires_label_mapping": false,
+      "needs_full_class_information": false,
+      "usable_with_top_label_only": true,
+      "usable_with_logits_or_full_probabilities": false,
+      "supports_multiclass": false,
+      "notes": "Relevant for question answering tasks."
+    },
+    {
+      "name": "AverageExactMatchForQA_Score",
+      "definition": "Computes exact match for question answering and averages across examples.",
+      "returns": "singleton",
+      "requires_ground_truth": true,
+      "requires_label_mapping": false,
+      "needs_full_class_information": false,
+      "usable_with_top_label_only": true,
+      "usable_with_logits_or_full_probabilities": false,
+      "supports_multiclass": false,
+      "notes": "Relevant for question answering tasks."
+    }
+  ],
+  "distance_functions": [
+   {
+  "name": "AbsoluteDistance",
+  "parameter_type": "distance_function",
+  "input_type": "singleton",
+  "definition": "Computes the absolute difference between two scalar numeric scores.",
+  "notes": [
+    "Applicable to scoring functions that return singleton scalar values."
+  ]
+},
+    {
+  "name": "WassersteinDistance",
+  "parameter_type": "distance_function",
+  "input_type": "set",
+  "definition": "Measures the distance between two distributions or sets of values by estimating the minimum work needed to transform one distribution into the other.",
+  "notes": [
+    "Applicable only with scoring functions that return sets of values.",
+    "If each set contains one value, the distance is equivalent to the absolute difference between those two values."
+  ]
+},
+    {
+      "name": "AbsoluteDivergenceFromExpectedOutcome",
+      "definition": "Normalize all group scores, compare them to a uniform expected outcome, compute absolute deviations, and average them.",
+      "compatible_scoring_return": "singleton",
+      "arity": "multigroup",
+      "interpretation": "Measures how far the observed allocation of outcome mass is from equal treatment across groups."
+    },
+    {
+      "name": "PerGroupAbsoluteDivergenceFromExpectedOutcome",
+      "definition": "Same as AbsoluteDivergenceFromExpectedOutcome but returns one divergence score per group.",
+      "compatible_scoring_return": "singleton",
+      "arity": "multigroup",
+      "interpretation": "Useful for identifying group-specific divergence from the expected outcome."
+    }, 
+    {
+  "name": "FailureDistance",
+  "parameter_type": "distance_function",
+  "input_type": "failure",
+  "definition": "Returns 1 if two compared outputs constitute a failure and 0 otherwise. A failure occurs when predicted labels differ or when the absolute difference between predicted scores exceeds a threshold.",
+  "notes": [
+     "Requires a threshold θ.",
+  "Framework default threshold: 0.20.",
+  "Returns a proportion between 0 and 1."
+  ]
+},
+    {
+      "name": "LabelMismatchDistance",
+      "parameter_type": "distance_function",
+      "input_type": "label",
+      "definition": "Returns 1 if two compared predicted labels differ and 0 if they are identical.",
+      "notes": [
+        "Applicable to scoring functions that return a predicted label rather than a numeric score."
+      ]
+    }
+  ],
+  "compatibility_principles": [
+    "A scoring function that returns a singleton should be paired with a distance function that accepts singleton values.",
+    "Supervised metrics such as F1, accuracy, precision, and recall require ground-truth labels and a reliable semantic mapping between dataset labels and model output classes.",
+    "If only a top label and one score are available, metric compatibility should be determined from metric requirements, available outputs, and available evidence.",
+    "Multigroup bias types may require a contrasting method that can combine more than two groups, either pairwise or directly.",
+    "The presence of matched counterfactual examples does not make supervised metrics incompatible when ground-truth labels and reliable label mappings are available."
+  ]
+}
